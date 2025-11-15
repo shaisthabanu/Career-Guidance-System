@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aptitude Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Medical Aptitude Test (10 MCQs)</h1>
+    <p class="muted">Answer all questions and submit — result will be saved.</p>
+
+    <form id="quizForm" class="quiz"></form>
+
+    <div class="row">
+      <button id="submitTest" class="primary">Submit Test</button>
+      <button id="back" class="outline">Back</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    auth.onAuthStateChanged(u => { if(!u) window.location.href = "index.html"; });
+
+    // Simple 10 MCQs (example). You can replace questions later.
+    const questions = [
+      {q:"Q1. Speed =", a:["Distance × Time","Distance ÷ Time","Time ÷ Distance","Mass × Distance"], correct:1},
+    {q:"Q2. Water freezes at:", a:["0°C","10°C","50°C","100°C"], correct:0},
+    {q:"Q3. The atomic number represents:", a:["Protons","Neutrons","Electrons","Mass number"], correct:0},
+    {q:"Q4. The universal law of gravitation was discovered by:", a:["Einstein","Newton","Galileo","Bohr"], correct:1},
+    {q:"Q5. H₂O is:", a:["Hydrogen Peroxide","Water","Oxygen","Acid"], correct:1},
+    {q:"Q6. Which gas is essential for human respiration?", a:["CO₂","O₂","N₂","H₂"], correct:1},
+    {q:"Q7. A triangle with all sides equal is:", a:["Scalene","Isosceles","Equilateral","Right-angled"], correct:2},
+    {q:"Q8. Which is a renewable energy source?", a:["Coal","Petrol","Solar","Diesel"], correct:2},
+    {q:"Q9. The SI unit of force is:", a:["Watt","Newton","Joule","Pascal"], correct:1},
+    {q:"Q10. Photosynthesis occurs in:", a:["Roots","Flowers","Leaves","Stem"], correct:2},
+
+    ];
+
+    const form = document.getElementById("quizForm");
+    questions.forEach((item, idx) => {
+      const block = document.createElement("div");
+      block.className = "qblock";
+      block.innerHTML = `<p class="qnum">${idx+1}. ${item.q}</p>`;
+      item.a.forEach((opt,i) => {
+        const id = `q${idx}_opt${i}`;
+        block.innerHTML += `<label><input type="radio" name="q${idx}" value="${i}" id="${id}"> ${opt}</label>`;
+      });
+      form.appendChild(block);
+    });
+
+    document.getElementById("submitTest").addEventListener("click", async () => {
+      // compute score
+      let score = 0;
+      const answers = [];
+      for(let i=0;i<questions.length;i++){
+        const val = form[`q${i}`].value;
+        answers.push(val === "" ? null : Number(val));
+        if(Number(val) === questions[i].correct) score++;
+      }
+
+      const career = localStorage.getItem("careerChoice") || "not-set";
+      const location = localStorage.getItem("studyLocation") || "not-set";
+
+      const user = auth.currentUser;
+      if(!user) return alert("Please login first.");
+
+      // save score to Firestore
+      try {
+        await db.collection("aptitudeScores").add({
+          studentId: user.uid,
+          email: user.email,
+          career,
+          location,
+          score,
+          answers,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert(`Test submitted — your score: ${score}/${questions.length}`);
+        // redirect to result page or student dashboard
+        window.location.href = "student_result.html";
+      } catch (err) {
+        alert("Error saving result: " + err.message);
+      }
+    });
+
+    document.getElementById("back").addEventListener("click", () => window.location.href = "location.html");
+  </script>
+</body>
+</html>

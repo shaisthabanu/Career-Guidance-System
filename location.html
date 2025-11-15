@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Location Selection</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Choose Location</h1>
+    <p class="muted">Select where you'd like to study</p>
+
+    <div class="grid options">
+      <button class="choice location" data-loc="india">🇮🇳 India</button>
+      <button class="choice location" data-loc="abroad">🌍 Abroad</button>
+    </div>
+
+    <div class="row">
+      <!-- <button id="startTest" class="primary" disabled>Start Aptitude Test</button> -->
+      <button id="back" class="outline">Select Course</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    auth.onAuthStateChanged(user=> { if(!user) window.location.href="index.html"; });
+
+    let selectedLoc = localStorage.getItem("studyLocation") || "";
+    const locBtns = document.querySelectorAll(".location");
+    const startBtn = document.getElementById("startTest");
+    const back = document.getElementById("back");
+
+    function update() {
+      locBtns.forEach(b => b.classList.toggle("active", b.dataset.loc === selectedLoc));
+      startBtn.disabled = !selectedLoc;
+    }
+
+    locBtns.forEach(b => b.addEventListener("click", () => {
+      selectedLoc = b.dataset.loc;
+      localStorage.setItem("studyLocation", selectedLoc);
+      update();
+    }));
+
+    // startBtn.addEventListener("click", () => {
+    //   window.location.href = "aptitude.html";
+    // });
+    back.addEventListener("click", () => window.location.href = "career.html");
+    update();
+  </script>
+</body>
+</html>

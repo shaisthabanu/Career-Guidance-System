@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result — Career Guidance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #7F7FD5, #86A8E7, #91EAE4);
+      color: #333;
+      overflow: hidden;
+    }
+
+    .panel {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .score {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #4b6cb7;
+      margin: 10px 0;
+      animation: popIn 0.8s ease-in-out;
+    }
+
+    .remarks {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      margin: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn-dashboard {
+      background: #7f7fd5;
+      color: white;
+    }
+
+    .btn-dashboard:hover {
+      background: #5d5dc9;
+    }
+
+    .btn-logout {
+      border: 2px solid #7f7fd5;
+      color: #7f7fd5;
+      background: transparent;
+    }
+
+    .btn-logout:hover {
+      background: #7f7fd5;
+      color: white;
+    }
+
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #7f7fd5;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin: 20px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 600px) {
+      .panel {
+        width: 95%;
+        padding: 25px;
+      }
+      .score {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h2>Your Test Results</h2>
+    <div class="loader" id="loader"></div>
+    <div id="resultBox" style="display:none;">
+      <p class="score" id="scoreValue">0%</p>
+      <p class="remarks" id="remarks">Loading your performance...</p>
+      <button class="btn-dashboard" onclick="goToDashboard()">Go to Student Dashboard</button>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script src="student_result.js"></script>
+</body>
+</html>

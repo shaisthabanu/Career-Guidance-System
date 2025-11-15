@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Career Selection</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Select Career Path</h1>
+    <p class="muted">Choose a path to see colleges and take the aptitude test.</p>
+
+    <div class="grid options">
+      <button id=engApt class="choice" data-career="engineering">⚙️ Engineering</button>
+      <button id=managementApt class="choice" data-career="management">💼 Management</button>
+      <button id=scienceApt class="choice" data-career="science">🔬 Science</button>
+      <button id=artsApt class="choice" data-career="arts">🎭 Arts</button>
+      <button id=medicalApt class="choice" data-career="medical">🩺 Medical</button>
+    </div>
+
+    <div class="row">
+      <!-- <button id="toLocation" class="primary" disabled>Next: Choose Location</button> -->
+      <button id="back" class="outline">Back</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    // protect page
+    auth.onAuthStateChanged(user => {
+      if (!user) window.location.href = "index.html";
+    });
+
+    let selectedCareer = localStorage.getItem("careerChoice") || "";
+
+    const choices = document.querySelectorAll(".choice");
+    const toLocation = document.getElementById("toLocation");
+    const back = document.getElementById("back");
+
+    function updateSelection() {
+      choices.forEach(c => c.classList.toggle("active", c.dataset.career === selectedCareer));
+      toLocation.disabled = !selectedCareer;
+    }
+
+    choices.forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedCareer = btn.dataset.career;
+        localStorage.setItem("careerChoice", selectedCareer);
+        updateSelection();
+      });
+    });
+
+    // toLocation.addEventListener("click", () => {
+    //   if (!selectedCareer) return alert("Select a career.");
+    //   window.location.href = "location.html";
+    // });
+    engApt.addEventListener("click", () => window.location.href = "aptitude_eng.html");
+    managementApt.addEventListener("click", () => window.location.href = "aptitude_management.html");
+    scienceApt.addEventListener("click", () => window.location.href = "aptitude_science.html");
+    artsApt.addEventListener("click", () => window.location.href = "aptitude_arts.html");
+    medicalApt.addEventListener("click", () => window.location.href = "aptitude_medical.html");
+    back.addEventListener("click", () => window.location.href = "location.html");
+    
+    updateSelection();
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Career Guidance — Unified Mentor</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Firebase v8 SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="info-section">
+      <div class="overlay">
+        <h1>Career Guidance</h1>
+        <p>Unified Mentor — Internship Project</p>
+        <p class="tagline">Helping students make better career choices 🚀</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-box animated-card">
+        <h2>Welcome</h2>
+        <p class="subtext">Login or Sign Up to continue</p>
+
+        <input type="email" id="email" placeholder="Email address" />
+        <input type="password" id="password" placeholder="Password (min 6 chars)" />
+
+        <button id="btnLogin">Login</button>
+        <button id="btnSignup" class="secondary">Sign Up — Student</button>
+        <button id="btnCollege" class="outline">Sign Up — College</button>
+
+        <p class="admin-note">Admin can be added later in Firestore. Use valid email format.</p>
+      </div>
+
+      <footer>
+        <small>© 2025 Career Guidance — Built with HTML, CSS, JS & Firebase</small>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Firebase config & app logic -->
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

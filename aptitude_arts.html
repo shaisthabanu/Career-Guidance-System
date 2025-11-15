@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aptitude Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Medical Aptitude Test (10 MCQs)</h1>
+    <p class="muted">Answer all questions and submit — result will be saved.</p>
+
+    <form id="quizForm" class="quiz"></form>
+
+    <div class="row">
+      <button id="submitTest" class="primary">Submit Test</button>
+      <button id="back" class="outline">Back</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    auth.onAuthStateChanged(u => { if(!u) window.location.href = "index.html"; });
+
+    // Simple 10 MCQs (example). You can replace questions later.
+    const questions = [
+      {q:"Q1. Who painted the Mona Lisa?", a:["Pablo Picasso","Leonardo da Vinci","Michelangelo","Van Gogh"], correct:1},
+    {q:"Q2. A poem of 14 lines is called:", a:["Haiku","Ode","Sonnet","Ballad"], correct:2},
+    {q:"Q3. Which is NOT a primary color?", a:["Red","Blue","Yellow","Green"], correct:3},
+    {q:"Q4. Theatre arts mainly involve:", a:["Experimentation","Acting and performance","Industrial design","Numerical analysis"], correct:1},
+    {q:"Q5. The study of human society and culture is:", a:["Psychology","Sociology","Anthropology","Archaeology"], correct:2},
+    {q:"Q6. In filmmaking, “script” means:", a:["Background music","Visual effects","Written dialogue and scenes","Lighting plan"], correct:2},
+    {q:"Q7. The grammar of a language refers to:", a:["Storytelling","Rules for sentence formation","Pronunciation","Writing styles"], correct:1},
+    {q:"Q8. The Taj Mahal is built in which architectural style?", a:["Roman","Mughal","Greek","Dravidian"], correct:1},
+    {q:"Q9. Which is a famous Indian classical dance?", a:["Ballet","Hip-hop","Bharatanatyam","Salsa"], correct:2},
+    {q:"Q10. Which instrument is string-based?", a:["Flute","Tabla","Guitar","Drum"], correct:2},
+
+    ];
+
+    const form = document.getElementById("quizForm");
+    questions.forEach((item, idx) => {
+      const block = document.createElement("div");
+      block.className = "qblock";
+      block.innerHTML = `<p class="qnum">${idx+1}. ${item.q}</p>`;
+      item.a.forEach((opt,i) => {
+        const id = `q${idx}_opt${i}`;
+        block.innerHTML += `<label><input type="radio" name="q${idx}" value="${i}" id="${id}"> ${opt}</label>`;
+      });
+      form.appendChild(block);
+    });
+
+    document.getElementById("submitTest").addEventListener("click", async () => {
+      // compute score
+      let score = 0;
+      const answers = [];
+      for(let i=0;i<questions.length;i++){
+        const val = form[`q${i}`].value;
+        answers.push(val === "" ? null : Number(val));
+        if(Number(val) === questions[i].correct) score++;
+      }
+
+      const career = localStorage.getItem("careerChoice") || "not-set";
+      const location = localStorage.getItem("studyLocation") || "not-set";
+
+      const user = auth.currentUser;
+      if(!user) return alert("Please login first.");
+
+      // save score to Firestore
+      try {
+        await db.collection("aptitudeScores").add({
+          studentId: user.uid,
+          email: user.email,
+          career,
+          location,
+          score,
+          answers,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert(`Test submitted — your score: ${score}/${questions.length}`);
+        // redirect to result page or student dashboard
+        window.location.href = "student_result.html";
+      } catch (err) {
+        alert("Error saving result: " + err.message);
+      }
+    });
+
+    document.getElementById("back").addEventListener("click", () => window.location.href = "location.html");
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>College Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel">
+    <h1>College Dashboard</h1>
+    <p class="muted">List of students who have taken the aptitude test</p>
+
+    <div id="tableArea" class="table"></div>
+
+    <div class="row">
+      <button id="refresh" class="primary">Refresh</button>
+      <button id="logout" class="outline">Logout</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    auth.onAuthStateChanged(async user => {
+      if(!user) return window.location.href="index.html";
+      const doc = await db.collection("users").doc(user.uid).get();
+      if(!doc.exists || doc.data().role !== "college") return window.location.href="index.html";
+      loadData();
+    });
+
+    async function loadData(){
+      document.getElementById("tableArea").innerHTML = "<p class='muted'>Loading...</p>";
+      const q = await db.collection("aptitudeScores").orderBy("createdAt","desc").limit(50).get();
+      if(q.empty) { document.getElementById("tableArea").innerHTML = "<p>No test submissions yet.</p>"; return; }
+      let html = `<table><thead><tr><th>Email</th><th>Career</th><th>Location</th><th>Score</th><th>Submitted</th></tr></thead><tbody>`;
+      q.forEach(doc => {
+        const d = doc.data();
+        const ts = d.createdAt ? new Date(d.createdAt.seconds*1000).toLocaleString() : "Just now";
+        html += `<tr><td>${d.email || d.studentId}</td><td>${d.career}</td><td>${d.location}</td><td>${d.score}</td><td>${ts}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById("tableArea").innerHTML = html;
+    }
+
+    document.getElementById("refresh").addEventListener("click", loadData);
+    document.getElementById("logout").addEventListener("click", ()=> auth.signOut().then(()=> window.location.href="index.html"));
+  </script>
+</body>
+</html>

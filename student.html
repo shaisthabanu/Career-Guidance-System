@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Student Dashboard</h1>
+    <p id="welcome" class="muted"></p>
+
+    <div class="grid options">
+      <button onclick="location.href='career.html'">Select Career</button>
+      <button onclick="location.href='location.html'">Select Location</button>
+      <button onclick="location.href='aptitude.html'">Take Aptitude Test</button>
+      <button onclick="location.href='student_result.html'">View Last Result</button>
+    </div>
+
+    <div class="row">
+      <button id="logout" class="outline">Logout</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    auth.onAuthStateChanged(async user => {
+      if(!user) return window.location.href="index.html";
+      const doc = await db.collection("users").doc(user.uid).get();
+      const role = doc.exists ? doc.data().role : null;
+      if(role !== "student") return window.location.href="index.html";
+      document.getElementById("welcome").textContent = `Logged in as ${user.email}`;
+    });
+
+    document.getElementById("logout").addEventListener("click", ()=> auth.signOut().then(()=> window.location.href="index.html"));
+  </script>
+</body>
+</html>

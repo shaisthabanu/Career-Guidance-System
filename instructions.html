@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Instructions — Career Guidance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="panel centered">
+    <h1>Welcome — Read These Instructions</h1>
+
+    <div class="instructions">
+      <ol>
+        <li>Create your student account (email/password).</li>
+        <li>Select a career field (Engineering, Management, Science, etc.).</li>
+        <li>Choose location: India / Abroad.</li>
+        <li>Take the 10-question aptitude test (MCQ) — score saved automatically.</li>
+        <li>After test, recommended colleges will be shown (future module).</li>
+        <li>Colleges can view test takers and their scores from their dashboard.</li>
+      </ol>
+    </div>
+
+    <div class="row">
+      <button id="btnStart" class="primary">Get Started</button>
+      <button id="btnLogout" class="outline">Logout</button>
+    </div>
+
+    <small class="muted">Follow steps in order. The test is auto-scored and stored in Firestore.</small>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // protect page & show role-specific button
+    auth.onAuthStateChanged(async user => {
+      if (!user) return window.location.href = "index.html";
+      const doc = await db.collection("users").doc(user.uid).get();
+      if (!doc.exists) return alert("User record missing. Contact admin.");
+      const role = doc.data().role;
+      // If college accidentally lands here, redirect to college dashboard
+      if (role === "college") return window.location.href = "college.html";
+
+      // student remains here
+    });
+
+    document.getElementById("btnStart").addEventListener("click", () => {
+      window.location.href = "location.html";
+    });
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      auth.signOut().then(()=> window.location.href = "index.html");
+    });
+  </script>
+</body>
+</html>
